@@ -1,0 +1,139 @@
+body {
+  margin: 0;
+  font-family: monospace;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+#ui {
+  width: 900px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 12px 20px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+#info {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+#instructions {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+#controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+button {
+  font-family: monospace;
+  font-size: 14px;
+  padding: 6px 14px;
+  border: 1px solid #333;
+  background: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #eee;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Colour Picker ---------- */
+#colour-picker {
+  display: none;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border: 2px dashed #666;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.picker-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+#current-colour-preview {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #333;
+  background: #ff0000;
+  vertical-align: middle;
+}
+
+#swatches {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.swatch {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #333;
+  border-radius: 6px;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px #aaa;
+}
+
+.swatch.selected {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+.custom-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+#brush-colour {
+  width: 50px;
+  height: 34px;
+  border: 2px solid #333;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 4px;
+}
+
+#status {
+  font-size: 14px;
+  color: #c00;
+  font-weight: bold;
+}
+
+#canvas-holder {
+  border: 1px solid #999;
+  background: white;
+}

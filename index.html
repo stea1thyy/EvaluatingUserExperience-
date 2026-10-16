@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Colour vs Monochrome Drawing Study</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+  <div id="ui">
+    <div id="info">
+      <span id="condition-label">Condition: MONO</span>
+      <span id="timer-label">Time: 150s</span>
+    </div>
+
+    <div id="instructions">
+      Draw a bench overlooking a valley. You have 2.5 minutes. Click and drag to draw.
+    </div>
+
+    <div id="controls">
+      <button id="start-btn">Start</button>
+      <button id="end-btn" disabled>End Early</button>
+      <button id="toggle-btn">Toggle Condition (C)</button>
+      <button id="reset-btn">Reset (R)</button>
+    </div>
+
+    <div id="colour-picker" style="display:none;">
+      <div class="picker-title">
+        <span>Choose your brush colour:</span>
+        <span id="current-colour-preview" title="Currently selected colour"></span>
+      </div>
+      <div id="swatches">
+        <button class="swatch" data-colour="#ff0000" style="background:#ff0000;" title="Red"></button>
+        <button class="swatch" data-colour="#0000ff" style="background:#0000ff;" title="Blue"></button>
+        <button class="swatch" data-colour="#00aa00" style="background:#00aa00;" title="Green"></button>
+        <button class="swatch" data-colour="#ffcc00" style="background:#ffcc00;" title="Yellow"></button>
+        <button class="swatch" data-colour="#000000" style="background:#000000;" title="Black"></button>
+      </div>
+      <div class="custom-picker">
+        <label for="brush-colour">Or pick a custom colour:</label>
+        <input type="color" id="brush-colour" value="#ff0000">
+      </div>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <div id="canvas-holder"></div>
+
+  <script src="logger.js"></script>
+  <script src="sketch.js"></script>
+</body>
+</html>
