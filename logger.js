@@ -1,4 +1,3 @@
-// Data Logger
 class DataLogger {
   constructor() {
     if (DataLogger.instance) return DataLogger.instance;
@@ -18,17 +17,10 @@ class DataLogger {
     this.condition = condition;
   }
 
-  recordStroke() {
-    this.strokes++;
-  }
+  recordStroke() { this.strokes++; }
+  recordPath(len) { this.pathLength += len; }
 
-  recordPath(len) {
-    this.pathLength += len;
-  }
-
-  stop() {
-    this.endTime = millis();
-  }
+  stop() { this.endTime = millis(); }
 
   print() {
     const duration = (this.endTime - this.startTime) / 1000;
@@ -44,5 +36,4 @@ class DataLogger {
     return summary;
   }
 }
-
 let logger;

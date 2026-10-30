@@ -1,10 +1,6 @@
-// ============================================================
-// Colour vs Monochrome Drawing Study
-// P5.js prototype for Week 4 demo
-// ============================================================
-
-let mode = "mono";          // mono or colour
-let timer = 150;            // 2.5 minutes
+// --- STATE VARIABLES ---
+let mode = "mono";          
+let timer = 300;            // 5 minutes
 let armed = false;
 let started = false;
 let finished = false;
@@ -12,33 +8,34 @@ let wasPressed = false;
 let lastFrameTick = 0;
 let brushColour = "#ff0000";
 
-const CONDITION_LABEL = document.getElementById("condition-label");
-const TIMER_LABEL = document.getElementById("timer-label");
+// Variable to store the randomly selected image number (1-5)
+let randomImageNumber = 1; 
+
+// --- DOM ---
 const STATUS = document.getElementById("status");
 const START_BTN = document.getElementById("start-btn");
-const END_BTN = document.getElementById("end-btn");
 const TOGGLE_BTN = document.getElementById("toggle-btn");
 const RESET_BTN = document.getElementById("reset-btn");
 const COLOUR_PICKER = document.getElementById("colour-picker");
 const BRUSH_COLOUR_INPUT = document.getElementById("brush-colour");
 const SWATCHES = document.querySelectorAll(".swatch");
+const IMAGE_CONTAINER = document.getElementById("image-container");
+const IMAGE_COUNTER = document.getElementById("image-counter");
 
 function setup() {
-  const canvas = createCanvas(900, 600);
+  const canvas = createCanvas(850, 650);
   canvas.parent("canvas-holder");
   background(255);
-  textFont("monospace");
+  
   logger = new DataLogger();
   logger.reset(mode);
 
   START_BTN.addEventListener("click", armStudy);
-  END_BTN.addEventListener("click", endEarly);
   TOGGLE_BTN.addEventListener("click", toggleCondition);
   RESET_BTN.addEventListener("click", resetStudy);
 
   BRUSH_COLOUR_INPUT.addEventListener("input", (e) => {
     brushColour = e.target.value;
-    updateColourPreview();
     updateSelectedSwatch();
   });
 
@@ -46,38 +43,26 @@ function setup() {
     swatch.addEventListener("click", () => {
       brushColour = swatch.dataset.colour;
       BRUSH_COLOUR_INPUT.value = brushColour;
-      updateColourPreview();
       updateSelectedSwatch();
     });
   });
 
   updateConditionUI();
-  updateColourPreview();
-  updateSelectedSwatch();
 }
 
 function draw() {
   handleTimer();
-
-  if (finished) {
-    drawTimeUp();
-    return;
-  }
-
-  drawHUD();
+  if (finished) return; 
   handleDrawing();
 }
 
-// ---------- Timer ----------
 function handleTimer() {
   if (!started || finished) return;
-
   const now = millis();
+  
   if (now - lastFrameTick >= 1000) {
     lastFrameTick = now;
     timer--;
-    updateTimerLabel();
-
     if (timer <= 0) {
       timer = 0;
       finishStudy();
@@ -88,39 +73,46 @@ function handleTimer() {
 function armStudy() {
   if (armed || started || finished) return;
   armed = true;
-  STATUS.textContent = "Ready — start drawing to begin the timer.";
+  STATUS.textContent = "Recording... Waiting for first stroke.";
   START_BTN.disabled = true;
-  END_BTN.disabled = false;
 }
 
 function beginTimer() {
   started = true;
   lastFrameTick = millis();
   logger.reset(mode);
-  STATUS.textContent = "Recording...";
-}
+  STATUS.textContent = "Timer running...";
 
-function endEarly() {
-  if (!armed || finished) return;
-  finishStudy();
+  // Pick a random number between 1 and 5
+  randomImageNumber = Math.floor(Math.random() * 5) + 1; 
+  
+  // Display the image
+  showImage(randomImageNumber);
+  
+  // Log which image they got
+  console.log("Participant assigned to sketch image: " + randomImageNumber);
 }
 
 function finishStudy() {
   finished = true;
   started = false;
   armed = false;
+  
   if (logger.startTime !== 0) {
     logger.stop();
-    logger.print();
+    logger.print(); 
   }
-  STATUS.textContent = "Time's up. Data logged to console.";
+  
+  let filename = 'DoodleStudy_' + mode + '_Img' + randomImageNumber + '_' + Date.now();
+  saveCanvas(filename, 'png');
+  
+  STATUS.textContent = "Time's up. Data logged and image downloaded.";
   START_BTN.disabled = true;
-  END_BTN.disabled = true;
 }
 
 function resetStudy() {
   background(255);
-  timer = 150;
+  timer = 300; 
   armed = false;
   started = false;
   finished = false;
@@ -129,8 +121,8 @@ function resetStudy() {
   logger.reset(mode);
   STATUS.textContent = "";
   START_BTN.disabled = false;
-  END_BTN.disabled = true;
-  updateTimerLabel();
+  IMAGE_CONTAINER.innerHTML = `<p style="color:#aaa;">Waiting to start...</p>`;
+  IMAGE_COUNTER.textContent = "A random image will appear here.";
   loop();
 }
 
@@ -141,19 +133,8 @@ function toggleCondition() {
 }
 
 function updateConditionUI() {
-  CONDITION_LABEL.textContent = "Condition: " + mode.toUpperCase();
-  COLOUR_PICKER.style.display = mode === "colour" ? "block" : "none";
-  updateColourPreview();
+  COLOUR_PICKER.style.display = mode === "colour" ? "flex" : "none";
   updateSelectedSwatch();
-}
-
-function updateTimerLabel() {
-  TIMER_LABEL.textContent = "Time: " + timer + "s";
-}
-
-function updateColourPreview() {
-  const preview = document.getElementById("current-colour-preview");
-  if (preview) preview.style.background = brushColour;
 }
 
 function updateSelectedSwatch() {
@@ -166,20 +147,13 @@ function updateSelectedSwatch() {
   });
 }
 
-// ---------- HUD ----------
-function drawHUD() {
-  noStroke();
-  fill(255);
-  rect(0, 0, 260, 70);
-
-  fill(0);
-  textSize(20);
-  textAlign(LEFT);
-  text("Time: " + timer + "s", 15, 30);
-  text("Condition: " + mode.toUpperCase(), 15, 58);
+// --- IMAGE DISPLAY ---
+function showImage(imageNumber) {
+  IMAGE_CONTAINER.innerHTML = `<img src="images/image${imageNumber}.jpg" alt="Sketch Reference">`;
+  IMAGE_COUNTER.textContent = "Sketch the image on the right.";
 }
 
-// ---------- Drawing ----------
+// --- DRAWING ---
 function handleDrawing() {
   if (!mouseIsPressed || finished) {
     wasPressed = false;
@@ -217,17 +191,6 @@ function handleDrawing() {
   }
 }
 
-// ---------- End screen ----------
-function drawTimeUp() {
-  noStroke();
-  fill(200, 0, 0);
-  textSize(48);
-  textAlign(CENTER, CENTER);
-  text("TIME'S UP", width / 2, height / 2);
-  noLoop();
-}
-
-// ---------- Keyboard shortcuts ----------
 function keyPressed() {
   if (key === "c" || key === "C") toggleCondition();
   if (key === "r" || key === "R") resetStudy();
